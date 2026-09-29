@@ -8,21 +8,6 @@ app = Flask(__name__)
 # --- THE BRIDGE CHECK ---
 api_key = os.environ.get("GROQ_API_KEY")
 
-def get_client():
-    if not api_key:
-        return None
-    return Groq(api_key=api_key)
-
-# SECRET DEBUG ROUTE: Visit your-url.onrender.com/debug to see this
-@app.route('/debug')
-def debug():
-    if not api_key:
-        return "<h1>DIAGNOSTIC: API Key is MISSING. Render is not sending the key to the code.</h1>", 500
-    
-    # Show only the first 5 characters to prove it exists without leaking the whole key
-    key_preview = api_key[:5] + "..." + api_key[-5:]
-    return f"<h1>DIAGNOSTIC: API Key FOUND!</h1><p>Key preview: {key_preview}</p><p>Server is ready. Try the main HUD now.</p>"
-
 def get_hud_design():
     return '''
 <!DOCTYPE html>
@@ -101,7 +86,7 @@ def get_hud_design():
             </div></div>
             <div class="panel"><div class="panel-title">COMMS CHANNEL</div><div id="chat-box"><div class="msg ai-msg">Cloud link established. Awaiting directive, Sir.</div></div></div>
             <div class="panel"><div class="panel-title">S-NODE Status</div><div style="font-size: 12px; line-height: 2;">S-CORE: <span style="color:#0f0">ONLINE</span><br>UPLINK: <span style="color:#0f0">ACTIVE</span></div></div>
-            <div class="bottom-bar"><div style="font-family: 'Orbitron'; font-size: 13px; color: var(--neon);">COMMAND:</div><div class="input-container"><input type, "text" id="user-input" class="input-field" placeholder="Awaiting your voice, Sir..." autocomplete="off"></div><button class="execute-btn" onclick="sendMessage()">EXECUTE</button></div>
+            <div class="bottom-bar"><div style="font-family: 'Orbitron'; font-size: 13px; color: var(--neon);">COMMAND:</div><div class="input-container"><input type="text" id="user-input" class="input-field" placeholder="Awaiting your voice, Sir..." autocomplete="off"></div><button class="execute-btn" onclick="sendMessage()">EXECUTE</button></div>
         </div>
     </script>
     <script>
@@ -143,22 +128,23 @@ def get_hud_design():
 
 @app.route('/')
 def home():
+    # DIAGNOSTIC: Check if API key is actually present before loading the HUD
+    if not api_key:
+        return "<h1>S-CLASS ERROR: GROQ_API_KEY is missing from Render Environment Variables!</h1>", 500
     return render_template_string(get_hud_design())
 
 @app.route('/ask', methods=['POST'])
 def ask():
     if not api_key:
-        return jsonify({'response': "S-CLASS ERROR: API Key missing from Render environment variables, Sir."}), 500
-    
+        return jsonify({'response': "S-CLASS ERROR: API Key missing, Sir."}), 500
     try:
         user_message = request.json.get('message')
         now = datetime.now()
         system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
         
-        # STABLE MODEL LIST
-        models_to_try = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
-        
-        for model in models_to_try:
+        # Fallback logic
+        models = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
+        for model in models:
             try:
                 client = Groq(api_key=api_key)
                 chat_completion = client.chat.completions.create(
@@ -167,11 +153,10 @@ def ask():
                 )
                 return jsonify({'response': chat_completion.choices[0].message.content})
             except:
-                continue 
-        
-        return jsonify({'response': "System Error: All models unreachable. Check your API key, Sir."}), 500
+                continue
+        return jsonify({'response': "System Error: All models unreachable, Sir."}), 500
     except Exception as e:
-        return jsonify({'response': f"Critical System Error: {str(e)}"}), 500
+        return jsonify({'response': f"Critical Error: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
