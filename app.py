@@ -319,17 +319,41 @@ def ask():
         now = datetime.now()
         system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
         
-        # FINAL STABLE MODEL CALL
-        chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message},
-            ],
-            model="llama-3.1-8b-instant",
-        )
-        return jsonify({'response': chat_completion.choices[0].message.content})
+        # LIST OF MODELS TO TRY (Fallback System)
+        # If the first one fails, it automatically tries the next one.
+        models_to_try = [
+            "llama-3.1-8b-instant", 
+            "llama3-8b-8192", 
+            "llama-3.1-70b-versatile",
+            "mixtral-8x7b-32768"
+        ]
+        
+        response_text = None
+        last_error = ""
+
+        for model in models_to_try:
+            try:
+                chat_completion = client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_message},
+                    ],
+                    model=model,
+                )
+                response_text = chat_completion.choices[0].message.content
+                break # Stop loop once we get a successful response!
+            except Exception as e:
+                last_error = str(e)
+                continue # Try the next model in the list
+
+        if response_text:
+            return jsonify({'response': response_text})
+        else:
+            return jsonify({'response': f"Critical System Error: All models failed. Last error: {last_error}"}), 500
+
     except Exception as e:
         return jsonify({'response': f"System Error: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     # Render requires the app to listen on 0.0.0.0 and a specific port
