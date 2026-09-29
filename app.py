@@ -5,7 +5,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Initialize Groq Client from Render Environment Variable
+# Initialize Groq Client
 api_key = os.environ.get("GROQ_API_KEY")
 client = Groq(api_key=api_key) if api_key else None
 
@@ -144,8 +144,8 @@ def ask():
         now = datetime.now()
         system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
         
-        # THE NEWEST STABLE MODELS (Llama 3.3 and Gemma 2)
-        models_to_try = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"]
+        # FINAL FALLBACK LIST (Most Stable Models)
+        models_to_try = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
         
         for model in models_to_try:
             try:
@@ -154,10 +154,13 @@ def ask():
                     model=model,
                 )
                 return jsonify({'response': chat_completion.choices[0].message.content})
-            except:
+            except Exception as e:
+                # If the error is specifically a 401 (Unauthorized), stop immediately
+                if "401" in str(e):
+                    return jsonify({'response': "API Key Error: Your Groq key is invalid, Sir."}), 401
                 continue 
         
-        return jsonify({'response': "System Error: All current models are unreachable, Sir."}), 500
+        return jsonify({'response': "System Error: All AI models are unreachable. Please check your API key, Sir."}), 500
     except Exception as e:
         return jsonify({'response': f"Critical System Error: {str(e)}"}), 500
 
