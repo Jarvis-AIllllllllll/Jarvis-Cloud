@@ -5,8 +5,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# --- API CONFIGURATION ---
-# We fetch the key from Render's Environment Variables
+# Initialize Groq Client from Render Environment Variable
 api_key = os.environ.get("GROQ_API_KEY")
 client = Groq(api_key=api_key) if api_key else None
 
@@ -15,7 +14,7 @@ def get_hud_design():
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF, charset=UTF-8">
+    <meta charset="UTF-8">
     <title>JARVIS | QUANTUM COMMAND CENTER</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
@@ -145,8 +144,8 @@ def ask():
         now = datetime.now()
         system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
         
-        # FALLBACK SYSTEM: Try 3 different models in order of stability
-        models_to_try = ["llama-3.1-8b-instant", "llama3-8b-8192", "mixtral-8x7b-32768"]
+        # THE NEWEST STABLE MODELS (Llama 3.3 and Gemma 2)
+        models_to_try = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "gemma2-9b-it"]
         
         for model in models_to_try:
             try:
@@ -156,9 +155,9 @@ def ask():
                 )
                 return jsonify({'response': chat_completion.choices[0].message.content})
             except:
-                continue # Try next model
+                continue 
         
-        return jsonify({'response': "System Error: All AI models are currently unreachable, Sir."}), 500
+        return jsonify({'response': "System Error: All current models are unreachable, Sir."}), 500
     except Exception as e:
         return jsonify({'response': f"Critical System Error: {str(e)}"}), 500
 
