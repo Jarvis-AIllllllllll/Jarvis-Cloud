@@ -5,9 +5,23 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Initialize Groq Client
+# --- THE BRIDGE CHECK ---
 api_key = os.environ.get("GROQ_API_KEY")
-client = Groq(api_key=api_key) if api_key else None
+
+def get_client():
+    if not api_key:
+        return None
+    return Groq(api_key=api_key)
+
+# SECRET DEBUG ROUTE: Visit your-url.onrender.com/debug to see this
+@app.route('/debug')
+def debug():
+    if not api_key:
+        return "<h1>DIAGNOSTIC: API Key is MISSING. Render is not sending the key to the code.</h1>", 500
+    
+    # Show only the first 5 characters to prove it exists without leaking the whole key
+    key_preview = api_key[:5] + "..." + api_key[-5:]
+    return f"<h1>DIAGNOSTIC: API Key FOUND!</h1><p>Key preview: {key_preview}</p><p>Server is ready. Try the main HUD now.</p>"
 
 def get_hud_design():
     return '''
@@ -15,7 +29,7 @@ def get_hud_design():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JARVIS | DIAGNOSTIC MODE</title>
+    <title>JARVIS | QUANTUM COMMAND CENTER</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
         :root { --neon: #00f2ff; --neon-dark: #005f73; --bg: #010812; --panel: rgba(0, 15, 30, 0.7); --border: rgba(0, 242, 255, 0.3); }
@@ -54,6 +68,8 @@ def get_hud_design():
         .input-field { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); padding: 18px 25px; color: white; outline: none; border-radius: 50px; font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); }
         .execute-btn { background: var(--neon); border: none; padding: 18px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
         .execute-btn:hover { background: white; transform: scale(1.05); box-shadow: 0 0 30px var(--neon); }
+        .game-btn { display: block; width: 100%; padding: 10px; margin-bottom: 8px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--border); color: var(--neon); text-align: center; text-decoration: none; border-radius: 5px; font-size: 12px; transition: 0.3s; }
+        .game-btn:hover { background: var(--neon); color: black; box-shadow: 0 0 15px var(--neon); }
     </style>
 </head>
 <body>
@@ -66,20 +82,26 @@ def get_hud_design():
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">📝 DATA LOG</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">🧮 ANALYSIS</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">⚙️ SYSTEM CORE</div>
+            <div style="margin-top: auto; padding: 20px;">
+                <div class="panel-title" style="border-bottom:1px solid var(--border); padding-bottom:5px; margin-bottom:10px;">Gaming Hub</div>
+                <a href="https://poki.com" target="_blank" class="game-btn">POKI</a>
+                <a href="https://crazygames.com" target="_blank" class="game-btn">CRAZYGAMES</a>
+                <a href="https://unblockedgames.xyz" target="_blank" class="game-btn">UNBLOCKED X</a>
+            </div>
         </div>
-        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">DIAGNOSTIC MODE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">S-CLASS ADMIN</span></div></div>
+        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">CLOUDSYNC ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">S-CLASS ADMIN</span></div></div>
         <div class="content">
-            <div class="panel"><div class="panel-title">CORE METRICS</div><div style="font-size: 13px; line-height: 2.2;">S-CORE: <span style="color:white">DIAGNOSING...</span><br>SENSORS: <span style="color:white">SYNCED</span><br>UPLINK: <span style="color:white">ACTIVE</span></div></div>
+            <div class="panel"><div class="panel-title">CORE METRICS</div><div style="font-size: 13px; line-height: 2.2;">S-CORE: <span style="color:white">STABLE</span><br>SENSORS: <span style="color:white">SYNCED</span><br>UPLINK: <span style="color:white">ACTIVE</span></div></div>
             <div class="center-area"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="core-center" id="reactor"></div></div>
-            <div class="panel"><div class="panel-title">SATELLITE FEED</div><div id="feed" style="font-size: 11px;">> Waiting for response...</div></div>
+            <div class="panel"><div class="panel-title">SATELLITE FEED</div><div id="feed" style="font-size: 11px;">> Sync active...<br>> Monitoring...</div></div>
             <div class="panel"><div class="panel-title">HARDWARE MONITOR</div><div class="monitor-row">
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="cpu-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="cpu-text">0%</div></div>
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="ram-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="ram-text">0%</div></div>
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="disk-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="disk-text">0%</div></div>
             </div></div>
-            <div class="panel"><div class="panel-title">COMMS CHANNEL</div><div id="chat-box"><div class="msg ai-msg">Diagnostic mode active. Send a message to test the link.</div></div></div>
-            <div class="panel"><div class="panel-title">S-NODE Status</div><div style="font-size: 12px; line-height: 2;">S-CORE: <span style="color:#0f0">ON</span><br>UPLINK: <span style="color:#0f0">ACTIVE</span></div></div>
-            <div class="bottom-bar"><div style="font-family: 'Orbitron'; font-size: 13px; color: var(--neon);">COMMAND:</div><div class="input-container"><input type="text" id="user-input" class="input-field" placeholder="Testing link..."><button class="execute-btn" onclick="sendMessage()">EXECUTE</button></div></div>
+            <div class="panel"><div class="panel-title">COMMS CHANNEL</div><div id="chat-box"><div class="msg ai-msg">Cloud link established. Awaiting directive, Sir.</div></div></div>
+            <div class="panel"><div class="panel-title">S-NODE Status</div><div style="font-size: 12px; line-height: 2;">S-CORE: <span style="color:#0f0">ONLINE</span><br>UPLINK: <span style="color:#0f0">ACTIVE</span></div></div>
+            <div class="bottom-bar"><div style="font-family: 'Orbitron'; font-size: 13px; color: var(--neon);">COMMAND:</div><div class="input-container"><input type, "text" id="user-input" class="input-field" placeholder="Awaiting your voice, Sir..." autocomplete="off"></div><button class="execute-btn" onclick="sendMessage()">EXECUTE</button></div>
         </div>
     </script>
     <script>
@@ -103,10 +125,10 @@ def get_hud_design():
         inputField.addEventListener("keypress", (e) => { if(e.key === "Enter") sendMessage(); });
         async function sendMessage() {
             const text = inputField.value; if (!text) return;
-            const cb = document, cb = document.getElementById('chat-box');
+            const cb = document.getElementById('chat-box');
             cb.innerHTML += `<div class="msg user-msg">${text}</div>`;
             inputField.value = '';
-            const aiDiv = document.createElement('div'); aiDiv.className = 'msg ai-msg'; aiDiv.innerText = 'Testing...';
+            const aiDiv = document.createElement('div'); aiDiv.className = 'msg ai-msg'; aiDiv.innerText = 'Thinking...';
             cb.appendChild(aiDiv);
             try {
                 const response = await fetch('/ask', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({message: text}) });
@@ -125,36 +147,31 @@ def home():
 
 @app.route('/ask', methods=['POST'])
 def ask():
-    if not client:
-        return jsonify({'response': "S-CLASS ERROR: API Key is missing from Render environment variables, Sir."}), 500
+    if not api_key:
+        return jsonify({'response': "S-CLASS ERROR: API Key missing from Render environment variables, Sir."}), 500
     
     try:
         user_message = request.json.get('message')
         now = datetime.now()
         system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
         
-        # TRY MODELS ONE BY ONE AND REPORT EXACT ERRORS
+        # STABLE MODEL LIST
         models_to_try = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
         
         for model in models_to_try:
             try:
+                client = Groq(api_key=api_key)
                 chat_completion = client.chat.completions.create(
                     messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
                     model=model,
                 )
                 return jsonify({'response': chat_completion.choices[0].message.content})
-            except Exception as e:
-                # Capture the exact error from the model call
-                err_str = str(e)
-                if "401" in err_str:
-                    return jsonify({'response': "API KEY ERROR: The Groq key is invalid or expired, Sir. Please generate a new one."}), 401
-                if "429" in err_str:
-                    return jsonify({'response': "RATE LIMIT ERROR: Too many requests. Please wait 1 minute, Sir."}), 429
+            except:
                 continue 
         
-        return jsonify({'response': "DIAGNOSTIC FAILURE: All models rejected the request. This usually means the API key is active but lacks permissions for these specific models, Sir."}), 500
+        return jsonify({'response': "System Error: All models unreachable. Check your API key, Sir."}), 500
     except Exception as e:
-        return jsonify({'response': f"CRITICAL SYSTEM CRASH: {str(e)}"}), 500
+        return jsonify({'response': f"Critical System Error: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
