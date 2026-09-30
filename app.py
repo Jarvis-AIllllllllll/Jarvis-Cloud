@@ -15,54 +15,145 @@ def get_hud_design():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JARVIS | COMMAND CENTER</title>
+    <title>KINGS CLIENT AI | COMMAND CENTER</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
-        :root { --neon: #00f2ff; --neon-dark: #005f73; --bg: #010812; --panel: rgba(0, 15, 30, 0.7); --border: rgba(0, 242, 255, 0.3); }
+        :root { 
+            --neon: #00f2ff; 
+            --gold: #ffcc00; 
+            --neon-dark: #005f73; 
+            --bg: #01050a; 
+            --panel: rgba(0, 10, 20, 0.8); 
+            --border: rgba(0, 242, 255, 0.3); 
+        }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); color: var(--neon); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
-        #bg-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a203d 0%, #01050a 100%); }
-        canvas#code-rain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.3; z-index: -2; }
-        .dashboard { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 60px 1fr 120px; height: 100vh; width: 100vw; position: relative; }
-        .sidebar { background: rgba(0, 5, 15, 0.9); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 0; backdrop-filter: blur(20px); z-index: 20; }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: bold; text-align: center; margin-bottom: 40px; letter-spacing: 10px; color: white; text-shadow: 0 0 20px var(--neon); }
-        .nav-item { padding: 15px 25px; font-size: 13px; cursor: pointer; transition: 0.3s; border-left: 4px solid transparent; color: rgba(0, 242, 255, 0.6); text-transform: uppercase; }
-        .nav-item:hover, .nav-item.active { background: rgba(0, 212, 255, 0.1); color: white; border-left: 4px solid var(--neon); text-shadow: 0 0 10px var(--neon); }
-        .top-bar { grid-column: 2 / 3; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; background: var(--panel); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); font-size: 13px; font-family: 'Orbitron', sans-serif; }
-        .content { grid-column: 2 / 3; display: grid; grid-template-columns: 320px 1fr 320px; grid-template-rows: 1fr 220px; gap: 20px; padding: 20px; }
-        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 20px; padding: 20px; backdrop-filter: blur(20px); position: relative; }
-        .panel-title { font-family: 'Orbitron', sans-serif; font-size: 11px; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between; color: white; }
+        #bg-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a1a30 0%, #01050a 100%); }
+        canvas#code-rain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2; z-index: -2; }
+        
+        .dashboard { 
+            display: grid; 
+            grid-template-columns: 280px 1fr; 
+            grid-template-rows: 60px 1fr 100px; 
+            height: 100vh; width: 100vw; 
+            box-sizing: border-box;
+        }
+
+        /* SIDEBAR */
+        .sidebar { 
+            background: rgba(0, 5, 15, 0.95); 
+            border-right: 2px solid var(--neon); 
+            display: flex; flex-direction: column; 
+            padding: 20px 0; backdrop-filter: blur(20px); 
+        }
+        .logo { 
+            font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: bold; 
+            text-align: center; margin-bottom: 40px; letter-spacing: 4px; color: white; 
+            text-shadow: 0 0 15px var(--neon); border-bottom: 1px solid var(--border); padding-bottom: 20px;
+        }
+        .nav-item { 
+            padding: 15px 25px; font-size: 13px; cursor: pointer; 
+            transition: 0.3s; border-left: 4px solid transparent; 
+            color: rgba(0, 242, 255, 0.6); text-transform: uppercase; 
+        }
+        .nav-item:hover, .nav-item.active { 
+            background: rgba(0, 212, 255, 0.1); color: white; 
+            border-left: 4px solid var(--gold); 
+            text-shadow: 0 0 10px var(--gold); 
+        }
+
+        /* TOP BAR */
+        .top-bar { 
+            grid-column: 2 / 3; display: flex; justify-content: space-between; 
+            align-items: center; padding: 0 30px; background: var(--panel); 
+            border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); 
+            font-size: 13px; font-family: 'Orbitron', sans-serif; 
+        }
+
+        /* CONTENT AREA - FIXED PROPORTIONS */
+        .content { 
+            grid-column: 2 / 3; 
+            display: grid; 
+            grid-template-columns: 300px 1fr 300px; 
+            grid-template-rows: 1fr 200px; 
+            gap: 20px; padding: 20px; 
+            box-sizing: border-box;
+        }
+
+        .panel { 
+            background: var(--panel); border: 1px solid var(--border); 
+            border-radius: 15px; padding: 20px; 
+            backdrop-filter: blur(20px); position: relative; 
+            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1);
+        }
+        .panel-title { 
+            font-family: 'Orbitron', sans-serif; font-size: 11px; 
+            text-transform: uppercase; margin-bottom: 15px; 
+            border-bottom: 1px solid var(--border); padding-bottom: 8px; 
+            display: flex; justify-content: space-between; color: white; 
+        }
+
+        /* THE CORE */
         .center-area { display: flex; justify-content: center; align-items: center; position: relative; }
         .ring { position: absolute; border-radius: 50%; border: 2px solid transparent; animation: spin linear infinite; }
         .r1 { width: 400px; height: 400px; border-top: 2px solid var(--neon); animation-duration: 10s; opacity: 0.3; }
-        .r2 { width: 320px; height: 320px; border-bottom: 2px solid var(--neon); animation-duration: 6s; opacity: 0.5; animation-direction: reverse; }
+        .r2 { width: 320px; height: 320px; border-bottom: 2px solid var(--gold); animation-duration: 6s; opacity: 0.5; animation-direction: reverse; }
         .r3 { width: 240px; height: 240px; border-left: 2px solid var(--neon); animation-duration: 3s; opacity: 0.8; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .core-center { width: 120px; height: 120px; background: radial-gradient(circle, white 0%, var(--neon) 30%, transparent 70%); border-radius: 50%; box-shadow: 0 0 60px var(--neon); animation: pulse 2s infinite ease-in-out; z-index: 10; }
+        .core-center { 
+            width: 120px; height: 120px; 
+            background: radial-gradient(circle, white 0%, var(--neon) 30%, transparent 70%); 
+            border-radius: 50%; box-shadow: 0 0 60px var(--neon), 0 0 20px var(--gold); 
+            animation: pulse 2s infinite ease-in-out; z-index: 10; 
+        }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+
+        /* GAUGE SYSTEM */
         .monitor-row { display: flex; justify-content: space-around; text-align: center; margin-top: 10px; }
         .gauge-container { position: relative; width: 70px; height: 70px; }
         .gauge-svg { transform: rotate(-90deg); width: 70px; height: 70px; }
         .gauge-bg { fill: none; stroke: var(--neon-dark); stroke-width: 6; }
-        .gauge-fill { fill: none; stroke: var(--neon); stroke-width: 6; stroke-dasharray: 200; transition: stroke-dashoffset 1s; }
+        .gauge-fill { fill: none; stroke: var(--gold); stroke-width: 6; stroke-dasharray: 200; transition: stroke-dashoffset 1s; }
         .gauge-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; color: white; }
+
+        /* CHAT */
         #chat-box { height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
         .msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; }
-        .user-msg { align-self: flex-end; background: var(--neon-dark); color: white; border-right: 3px solid var(--neon); }
+        .user-msg { align-self: flex-end; background: var(--neon-dark); color: white; border-right: 3px solid var(--gold); }
         .ai-msg { align-self: flex-start; background: rgba(255,255,255,0.05); border-left: 3px solid var(--neon); }
-        .bottom-bar { grid-column: 1 / span 3; background: rgba(0, 10, 20, 0.9); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 40px; backdrop-filter: blur(30px); }
+
+        /* BOTTOM BAR */
+        .bottom-bar { 
+            grid-column: 2 / 3; background: rgba(0, 10, 20, 0.9); 
+            border-top: 1px solid var(--border); display: flex; align-items: center; 
+            padding: 0 40px; backdrop-filter: blur(30px); 
+        }
         .input-container { flex: 1; position: relative; display: flex; align-items: center; margin: 0 30px; }
-        .input-field { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); padding: 18px 25px; color: white; outline: none; border-radius: 50px; font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); }
-        .execute-btn { background: var(--neon); border: none; padding: 18px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .input-field { 
+            width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); 
+            padding: 18px 25px; color: white; outline: none; border-radius: 50px; 
+            font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); 
+        }
+        .input-field:focus { border-color: var(--gold); box-shadow: 0 0 25px var(--gold); }
+        .execute-btn { 
+            background: var(--neon); border: none; padding: 18px 35px; 
+            border-radius: 50px; font-weight: bold; cursor: pointer; 
+            text-transform: uppercase; transition: 0.3s; 
+        }
         .execute-btn:hover { background: white; transform: scale(1.05); box-shadow: 0 0 30px var(--neon); }
-        .game-btn { display: block; width: 100%; padding: 10px; margin-bottom: 8px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--border); color: var(--neon); text-align: center; text-decoration: none; border-radius: 5px; font-size: 12px; transition: 0.3s; }
-        .game-btn:hover { background: var(--neon); color: black; box-shadow: 0 0 15px var(--neon); }
+        .game-btn { 
+            display: block; width: 100%; padding: 10px; margin-bottom: 8px; 
+            background: rgba(0, 242, 255, 0.05); border: 1px solid var(--border); 
+            color: var(--neon); text-align: center; text-decoration: none; 
+            border-radius: 5px; font-size: 12px; transition: 0.3s; 
+        }
+        .game-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 15px var(--gold); }
     </style>
 </head>
 <body>
     <div id="bg-system"><canvas id="code-rain"></canvas></div>
     <div class="dashboard">
         <div class="sidebar">
-            <div class="logo">JARVIS</div>
+            <div class="logo">KINGS CLIENT AI</div>
             <div class="nav-item active">COMMAND CENTER</div>
             <div class="nav-item" onclick="window.open('https://www.google.com', '_blank')">🌐 WEB LINK</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">📝 DATA LOG</div>
@@ -75,17 +166,17 @@ def get_hud_design():
                 <a href="https://unblockedgames.xyz" target="_blank" class="game-btn">UNBLOCKED X</a>
             </div>
         </div>
-        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">CLOUDSYNC ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">S-CLASS ADMIN</span></div></div>
+        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">S-CLOUD ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">KINGS ADMIN</span></div></div>
         <div class="content">
-            <div class="panel"><div class="panel-title">CORE METRICS</div><div style="font-size: 13px; line-height: 2.2;">S-CORE: <span style="color:white">STABLE</span><br>SENSORS: <span style="color:white">SYNCED</span><br>UPLINK: <span style="color:white">ACTIVE</span></div></div>
+            <div class="panel"><div class="panel-title">CORE METRICS <span style="color:white">ELITE</span></div><div style="font-size: 13px; line-height: 2.2;">S-CORE: <span style="color:white">STABLE</span><br>SENSORS: <span style="color:white">SYNCED</span><br>UPLINK: <span style="color:white">ACTIVE</span></div></div>
             <div class="center-area"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="core-center" id="reactor"></div></div>
-            <div class="panel"><div class="panel-title">SATELLITE FEED</div><div id="feed" style="font-size: 11px;">> Cloud link established...<br>> Awaiting directive, Sir.</div></div>
+            <div class="panel"><div class="panel-title">SATELLITE FEED <span style="color:var(--accent)">LIVE</span></div><div id="feed" style="font-size: 11px;">> Link established...<br>> Awaiting directive...</div></div>
             <div class="panel"><div class="panel-title">HARDWARE MONITOR</div><div class="monitor-row">
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="cpu-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="cpu-text">0%</div></div>
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="ram-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="ram-text">0%</div></div>
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="disk-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="disk-text">0%</div></div>
             </div></div>
-            <div class="panel"><div class="panel-title">COMMS CHANNEL</div><div id="chat-box"><div class="msg ai-msg">Cloud link established. Awaiting directive, Sir.</div></div></div>
+            <div class="panel"><div class="panel-title">COMMS CHANNEL</div><div id="chat-box"><div class="msg ai-msg">Welcome to Kings Client AI. Awaiting your directive, Sir.</div></div></div>
             <div class="panel"><div class="panel-title">S-NODE Status</div><div style="font-size: 12px; line-height: 2;">S-CORE: <span style="color:#0f0">ONLINE</span><br>UPLINK: <span style="color:#0f0">S-CLOUD</span></div></div>
             <div class="bottom-bar"><div style="font-family: 'Orbitron'; font-size: 13px; color: var(--neon);">COMMAND:</div><div class="input-container"><input type="text" id="user-input" class="input-field" placeholder="Awaiting your voice, Sir..." autocomplete="off"></div><button class="execute-btn" onclick="sendMessage()">EXECUTE</button></div>
         </div>
@@ -97,7 +188,7 @@ def get_hud_design():
         const chars = "01XyZ89ABCDEF<>/{}[]()$#@%";
         let drops = [];
         function init() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; cols = Math.floor(w / 20); drops = []; for(let i=0; i<cols; i++) drops[i] = Math.random() * h; }
-        function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle = "#00f2ff"; ctx.font = "14px monospace"; for(let i=0; i<drops.length; i++) { ctx, ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*20, drops[i]); if(drops[i] > h && Math.random() > 0.975) drops[i] = 0; drops[i] += 2; } }
+        function draw() { ctx.clearRect(0,0,w,h); ctx.fillStyle = "#00f2ff"; ctx.font = "14px monospace"; for(let i=0; i<drops.length; i++) { ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*20, drops[i]); if(drops[i] > h && Math.random() > 0.975) drops[i] = 0; drops[i] += 2; } }
         setInterval(draw, 50); window.addEventListener('resize', init); init();
         function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }
         setInterval(updateClock, 1000); updateClock();
@@ -138,20 +229,16 @@ def action():
 @app.route('/ask', methods=['POST'])
 def ask():
     if not api_key:
-        return jsonify({'response': "API Key missing from Render environment variables, Sir."}), 500
-    
+        return jsonify({'response': "API Key missing from Render environment, Sir."}), 500
     try:
         user_message = request.json.get('message')
         now = datetime.now()
-        system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
+        system_prompt = f"You are Kings Client AI. Date: {now.strftime('%B %d, %Y')}. You are an elite, professional, and high-status AI assistant. Refer to the user as 'Sir'. Be concise and highly technical."
         
-        # SINGLE, MOST STABLE MODEL CALL
+        # THE MOST STABLE MODEL FOR GROQ FREE TIER
         chat_completion = client.chat.completions.create(
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_message},
-            ],
-            model="llama-3.3-70b-versatile",
+            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
+            model="llama-3.1-8b-instant",
         )
         return jsonify({'response': chat_completion.choices[0].message.content})
     except Exception as e:
