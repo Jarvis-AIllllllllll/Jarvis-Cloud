@@ -15,7 +15,7 @@ def get_hud_design():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Project 1</title>
+    <title>JARVIS | FINAL PRODUCTION</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
         :root { --neon: #00f2ff; --neon-dark: #005f73; --bg: #010812; --panel: rgba(0, 15, 30, 0.7); --border: rgba(0, 242, 255, 0.3); }
@@ -51,7 +51,7 @@ def get_hud_design():
         .ai-msg { align-self: flex-start; background: rgba(255,255,255,0.05); border-left: 3px solid var(--neon); }
         .bottom-bar { grid-column: 1 / span 3; background: rgba(0, 10, 20, 0.9); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 40px; backdrop-filter: blur(30px); }
         .input-container { flex: 1; position: relative; display: flex; align-items: center; margin: 0 30px; }
-        .input-field { width: 100%; background: rgba(0, 0,, 0.6); border: 1px solid var(--border); padding: 18px 25px; color: white; outline: none; border-radius: 50px; font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); }
+        .input-field { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); padding: 18px 25px; color: white; outline: none; border-radius: 50px; font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); }
         .execute-btn { background: var(--neon); border: none; padding: 18px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
         .execute-btn:hover { background: white; transform: scale(1.05); box-shadow: 0 0 30px var(--neon); }
         .game-btn { display: block; width: 100%; padding: 10px; margin-bottom: 8px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--border); color: var(--neon); text-align: center; text-decoration: none; border-radius: 5px; font-size: 12px; transition: 0.3s; }
@@ -62,11 +62,11 @@ def get_hud_design():
     <div id="bg-system"><canvas id="code-rain"></canvas></div>
     <div class="dashboard">
         <div class="sidebar">
-            <div class,="logo">JARVIS</div>
+            <div class="logo">JARVIS</div>
             <div class="nav-item active">COMMAND CENTER</div>
             <div class="nav-item" onclick="window.open('https://www.google.com', '_blank')">🌐 WEB LINK</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">📝 DATA LOG</div>
-            <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">🧮 ANALYSIS</div>
+            <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.'), console.log('Log requested')">🧮 ANALYSIS</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">⚙️ SYSTEM CORE</div>
             <div style="margin-top: auto; padding: 20px;">
                 <div class="panel-title" style="border-bottom:1px solid var(--border); padding-bottom:5px; margin-bottom:10px;">Gaming Hub</div>
@@ -75,18 +75,18 @@ def get_hud_design():
                 <a href="https://unblockedgames.xyz" target="_blank" class="game-btn">UNBLOCKED X</a>
             </div>
         </div>
-        <div class="top-bar"><div>S-STATUS: <span id="sys-status" style="color: #0f0;">CLOUDSYNC ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">S-CLASS ADMIN</span></div></div>
+        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">S-CLOUD ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">S-CLASS ADMIN</span></div></div>
         <div class="content">
             <div class="panel"><div class="panel-title">CORE METRICS</div><div style="font-size: 13px; line-height: 2.2;">S-CORE: <span style="color:white">STABLE</span><br>SENSORS: <span style="color:white">SYNCED</span><br>UPLINK: <span style="color:white">ACTIVE</span></div></div>
             <div class="center-area"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="core-center" id="reactor"></div></div>
-            <div class="panel"><div class="panel-title">SATELLITE FEED <span style="color:var(--accent)">LIVE</span></div><div id="feed" style="font-size: 11px; color: rgba(0,242,255,0.6); line-height: 1.8;">> System initialized...<br>> Awaiting directive, Sir.</div></div>
+            <div class="panel"><div class="panel-title">SATELLITE FEED</div><div id="feed" style="font-size: 11px;">> Link active...<br>> Ready for directive, Sir.</div></div>
             <div class="panel"><div class="panel-title">HARDWARE MONITOR</div><div class="monitor-row">
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="cpu-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="cpu-text">0%</div></div>
-                <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="ram-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="ram-text">0%</div></div>
+                <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="ram-gauge" cx="35" cy, "35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="ram-text">0%</div></div>
                 <div class="gauge-container"><svg class="gauge-svg"><circle class="gauge-bg" cx="35" cy="35" r="30"/><circle class="gauge-fill" id="disk-gauge" cx="35" cy="35" r="30" stroke-dashoffset="100"/></svg><div class="gauge-text" id="disk-text">0%</div></div>
             </div></div>
             <div class="panel"><div class="panel-title">COMMS CHANNEL</div><div id="chat-box"><div class="msg ai-msg">Cloud link established. Awaiting directive, Sir.</div></div></div>
-            <div class="panel"><div class="panel-title">S-NODE Status</div><div style="font-size: 12px; line-height: 2;">S-CORE: <span style="color:#0f0">ONLINE</span><br>UPLINK: <span style="color:#0f0">ACTIVE</span></div></div>
+            <div class="panel"><div class="panel-title">S-NODE Status</div><div style="font-size: 12px; line-height: 2;">S-CORE: <span style="color:#0f0">ONLINE</span><br>UPLINK: <span style="color:#0f0">S-CLOUD</span></div></div>
             <div class="bottom-bar"><div style="font-family: 'Orbitron'; font-size: 13px; color: var(--neon);">COMMAND:</div><div class="input-container"><input type="text" id="user-input" class="input-field" placeholder="Awaiting your voice, Sir..." autocomplete="off"></div><button class="execute-btn" onclick="sendMessage()">EXECUTE</button></div>
         </div>
     </script>
@@ -109,36 +109,17 @@ def get_hud_design():
         setInterval(updateGauges, 2000); updateGauges();
         const inputField = document.getElementById('user-input');
         inputField.addEventListener("keypress", (e) => { if(e.key === "Enter") sendMessage(); });
-        
         async function sendMessage() {
             const text = inputField.value; if (!text) return;
             const cb = document.getElementById('chat-box');
-            const feed = document.getElementById('feed');
             cb.innerHTML += `<div class="msg user-msg">${text}</div>`;
             inputField.value = '';
-            
-            // UPDATE FEED: Starting request
-            feed.innerHTML += `<br>> Contacting Groq Cloud...`;
-            cb.scrollTop = cb.scrollHeight;
-            
             const aiDiv = document.createElement('div'); aiDiv.className = 'msg ai-msg'; aiDiv.innerText = 'Thinking...';
             cb.appendChild(aiDiv);
-            
             try {
                 const response = await fetch('/ask', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({message: text}) });
-                const data = await response.json();
-                
-                if(response.ok) {
-                    feed.innerHTML += `<br>> Response received: 200 OK`;
-                    aiDiv.innerText = data.response;
-                } else {
-                    feed.innerHTML += `<br>> <span style="color:red">ERROR: ${data.response}</span>`;
-                    aiDiv.innerText = "System Error, Sir.";
-                }
-            } catch (e) {
-                feed.innerHTML += `<br>> <span style="color:red">Network Failure: ${e}</span>`;
-                aiDiv.innerText = "Critical Error, Sir.";
-            }
+                const data = await response.json(); aiDiv.innerText = data.response;
+            } catch (e) { aiDiv.innerText = "Critical Error, Sir."; }
             cb.scrollTop = cb.scrollHeight;
         }
     </script>
@@ -150,32 +131,37 @@ def get_hud_design():
 def home():
     return render_template_string(get_hud_design())
 
+@app.route('/action', methods=['POST'])
+def action():
+    return jsonify({'status': 'Cloud Mode: Local OS access restricted, Sir.'})
+
 @app.route('/ask', methods=['POST'])
 def ask():
     if not api_key:
-        return jsonify({'response': "S-CLASS ERROR: API Key missing from Render environment variables, Sir."}), 500
+        return jsonify({'response': "API Key missing from Render environment, Sir."}), 500
     
     try:
         user_message = request.json.get('message')
         now = datetime.now()
         system_prompt = f"You are JARVIS. Date: {now.strftime('%B %d, %Y')}. Be professional and loyal. Refer to the user as 'Sir'."
         
-        # Stable Model List
-        models_to_try = ["llama-3.1-8b-instant", "llama-3.3-70b-versatile", "mixtral-8x7b-32768"]
+        # THE MOST STABLE MODELS AVAILABLE TODAY
+        models_to_try = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
         
-        for model in models_to_try:
+        for model in models_to_// This is just a fallback list
             try:
-                client = Groq(api_key=api_key)
-                chat_completion = client.chat.completions.create(
+                # Use a fresh client instance for every request to ensure no stale connections
+                current_client = Groq(api_key=api_key)
+                chat_completion = current_client.chat.completions.create(
                     messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
                     model=model,
                 )
                 return jsonify({'response': chat_completion.choices[0].message.content})
-            except Exception as model_err:
-                # If the model is missing, we just continue to the next one.
+            except Exception as e:
+                print(f"Model {model} failed: {str(e)}")
                 continue 
         
-        return jsonify({'response': "All AI models unreachable. Check API key, Sir."}), 500
+        return jsonify({'response': "System Error: No available models could respond. Check your Groq account usage, Sir."}), 500
     except Exception as e:
         return jsonify({'response': f"Critical System Error: {str(e)}"}), 500
 
