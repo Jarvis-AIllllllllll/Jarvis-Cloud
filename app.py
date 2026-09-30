@@ -145,7 +145,7 @@ def ask():
         client_instance = Groq(api_key=api_key)
         chat_completion = client_instance.chat.completions.create(
             messages=[{"role": "user", "content": user_message}],
-            model="llama-3.1-8b-instant",
+            model="opencode",
         )
         return jsonify({'response': chat_completion.choices[0].message.content})
     except Exception as e:
