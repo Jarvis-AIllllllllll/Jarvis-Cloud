@@ -1,13 +1,13 @@
 import os
+import requests
+import json
 from flask import Flask, render_template_string, request, jsonify
-from groq import Groq
 from datetime import datetime
 
 app = Flask(__name__)
 
-# Initialize Groq Client from Render Environment Variable
+# Initialize API Key from Render Environment
 api_key = os.environ.get("GROQ_API_KEY")
-client = Groq(api_key=api_key) if api_key else None
 
 def get_hud_design():
     return '''
@@ -15,137 +15,47 @@ def get_hud_design():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>KINGS CLIENT AI | COMMAND CENTER</title>
+    <title>KINGS CLIENT AI</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
-        :root { 
-            --neon: #00f2ff; 
-            --gold: #ffcc00; 
-            --neon-dark: #005f73; 
-            --bg: #01050a; 
-            --panel: rgba(0, 10, 20, 0.8); 
-            --border: rgba(0, 242, 255, 0.3); 
-        }
+        :root { --neon: #00f2ff; --neon-dark: #005f73; --bg: #01050a; --panel: rgba(0, 10, 20, 0.8); --border: rgba(0, 242, 255, 0.3); --gold: #ffcc00; }
         body, html { margin: 0; padding: 0; width: 100%; height: 100%; background-color: var(--bg); color: var(--neon); font-family: 'Rajdhani', sans-serif; overflow: hidden; }
         #bg-system { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a1a30 0%, #01050a 100%); }
         canvas#code-rain { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.2; z-index: -2; }
-        
-        .dashboard { 
-            display: grid; 
-            grid-template-columns: 280px 1fr; 
-            grid-template-rows: 60px 1fr 100px; 
-            height: 100vh; width: 100vw; 
-            box-sizing: border-box;
-        }
-
-        /* SIDEBAR */
-        .sidebar { 
-            background: rgba(0, 5, 15, 0.95); 
-            border-right: 2px solid var(--neon); 
-            display: flex; flex-direction: column; 
-            padding: 20px 0; backdrop-filter: blur(20px); 
-        }
-        .logo { 
-            font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: bold; 
-            text-align: center; margin-bottom: 40px; letter-spacing: 4px; color: white; 
-            text-shadow: 0 0 15px var(--neon); border-bottom: 1px solid var(--border); padding-bottom: 20px;
-        }
-        .nav-item { 
-            padding: 15px 25px; font-size: 13px; cursor: pointer; 
-            transition: 0.3s; border-left: 4px solid transparent; 
-            color: rgba(0, 242, 255, 0.6); text-transform: uppercase; 
-        }
-        .nav-item:hover, .nav-item.active { 
-            background: rgba(0, 212, 255, 0.1); color: white; 
-            border-left: 4px solid var(--gold); 
-            text-shadow: 0 0 10px var(--gold); 
-        }
-
-        /* TOP BAR */
-        .top-bar { 
-            grid-column: 2 / 3; display: flex; justify-content: space-between; 
-            align-items: center; padding: 0 30px; background: var(--panel); 
-            border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); 
-            font-size: 13px; font-family: 'Orbitron', sans-serif; 
-        }
-
-        /* CONTENT AREA - FIXED PROPORTIONS */
-        .content { 
-            grid-column: 2 / 3; 
-            display: grid; 
-            grid-template-columns: 300px 1fr 300px; 
-            grid-template-rows: 1fr 200px; 
-            gap: 20px; padding: 20px; 
-            box-sizing: border-box;
-        }
-
-        .panel { 
-            background: var(--panel); border: 1px solid var(--border); 
-            border-radius: 15px; padding: 20px; 
-            backdrop-filter: blur(20px); position: relative; 
-            box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1);
-        }
-        .panel-title { 
-            font-family: 'Orbitron', sans-serif; font-size: 11px; 
-            text-transform: uppercase; margin-bottom: 15px; 
-            border-bottom: 1px solid var(--border); padding-bottom: 8px; 
-            display: flex; justify-content: space-between; color: white; 
-        }
-
-        /* THE CORE */
+        .dashboard { display: grid; grid-template-columns: 280px 1fr; grid-template-rows: 60px 1fr 100px; height: 100vh; width: 100vw; box-sizing: border-box; }
+        .sidebar { background: rgba(0, 5, 15, 0.95); border-right: 2px solid var(--neon); display: flex; flex-direction: column; padding: 20px 0; backdrop-filter: blur(20px); }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: bold; text-align: center; margin-bottom: 40px; letter-spacing: 4px; color: white; text-shadow: 0 0 15px var(--neon); border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        .nav-item { padding: 15px 25px; font-size: 13px; cursor: pointer; transition: 0.3s; border-left: 4px solid transparent; color: rgba(0, 242, 255, 0.6); text-transform: uppercase; }
+        .nav-item:hover, .nav-item.active { background: rgba(0, 212, 255, 0.1); color: white; border-left: 4px solid var(--gold); text-shadow: 0 0 10px var(--gold); }
+        .top-bar { grid-column: 2 / 3; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; background: var(--panel); border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); font-size: 13px; font-family: 'Orbitron', sans-serif; }
+        .content { grid-column: 2 / 3; display: grid; grid-template-columns: 300px 1fr 300px; grid-template-rows: 1fr 200px; gap: 20px; padding: 20px; box-sizing: border-box; }
+        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 15px; padding: 20px; backdrop-filter: blur(20px); position: relative; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); }
+        .panel-title { font-family: 'Orbitron', sans-serif; font-size: 11px; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 8px; display: flex; justify-content: space-between; color: white; }
         .center-area { display: flex; justify-content: center; align-items: center; position: relative; }
         .ring { position: absolute; border-radius: 50%; border: 2px solid transparent; animation: spin linear infinite; }
         .r1 { width: 400px; height: 400px; border-top: 2px solid var(--neon); animation-duration: 10s; opacity: 0.3; }
         .r2 { width: 320px; height: 320px; border-bottom: 2px solid var(--gold); animation-duration: 6s; opacity: 0.5; animation-direction: reverse; }
         .r3 { width: 240px; height: 240px; border-left: 2px solid var(--neon); animation-duration: 3s; opacity: 0.8; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .core-center { 
-            width: 120px; height: 120px; 
-            background: radial-gradient(circle, white 0%, var(--neon) 30%, transparent 70%); 
-            border-radius: 50%; box-shadow: 0 0 60px var(--neon), 0 0 20px var(--gold); 
-            animation: pulse 2s infinite ease-in-out; z-index: 10; 
-        }
+        .core-center { width: 120px; height: 120px; background: radial-gradient(circle, white 0%, var(--neon) 30%, transparent 70%); border-radius: 50%; box-shadow: 0 0 60px var(--neon), 0 0 20px var(--gold); animation: pulse 2s infinite ease-in-out; z-index: 10; }
         @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
-
-        /* GAUGE SYSTEM */
         .monitor-row { display: flex; justify-content: space-around; text-align: center; margin-top: 10px; }
         .gauge-container { position: relative; width: 70px; height: 70px; }
         .gauge-svg { transform: rotate(-90deg); width: 70px; height: 70px; }
         .gauge-bg { fill: none; stroke: var(--neon-dark); stroke-width: 6; }
         .gauge-fill { fill: none; stroke: var(--gold); stroke-width: 6; stroke-dasharray: 200; transition: stroke-dashoffset 1s; }
         .gauge-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: bold; color: white; }
-
-        /* CHAT */
         #chat-box { height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 13px; }
         .msg { padding: 8px 12px; border-radius: 8px; max-width: 80%; }
         .user-msg { align-self: flex-end; background: var(--neon-dark); color: white; border-right: 3px solid var(--gold); }
         .ai-msg { align-self: flex-start; background: rgba(255,255,255,0.05); border-left: 3px solid var(--neon); }
-
-        /* BOTTOM BAR */
-        .bottom-bar { 
-            grid-column: 2 / 3; background: rgba(0, 10, 20, 0.9); 
-            border-top: 1px solid var(--border); display: flex; align-items: center; 
-            padding: 0 40px; backdrop-filter: blur(30px); 
-        }
+        .bottom-bar { grid-column: 2 / 3; background: rgba(0, 10, 20, 0.9); border-top: 1px solid var(--border); display: flex; align-items: center; padding: 0 40px; backdrop-filter: blur(30px); }
         .input-container { flex: 1; position: relative; display: flex; align-items: center; margin: 0 30px; }
-        .input-field { 
-            width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); 
-            padding: 18px 25px; color: white; outline: none; border-radius: 50px; 
-            font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); 
-        }
+        .input-field { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border); padding: 18px 25px; color: white; outline: none; border-radius: 50px; font-size: 16px; transition: 0.4s; box-shadow: inset 0 0 15px rgba(0, 242, 255, 0.1); }
         .input-field:focus { border-color: var(--gold); box-shadow: 0 0 25px var(--gold); }
-        .execute-btn { 
-            background: var(--neon); border: none; padding: 18px 35px; 
-            border-radius: 50px; font-weight: bold; cursor: pointer; 
-            text-transform: uppercase; transition: 0.3s; 
-        }
+        .execute-btn { background: var(--neon); border: none; padding: 18px 35px; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
         .execute-btn:hover { background: white; transform: scale(1.05); box-shadow: 0 0 30px var(--neon); }
-        .game-btn { 
-            display: block; width: 100%; padding: 10px; margin-bottom: 8px; 
-            background: rgba(0, 242, 255, 0.05); border: 1px solid var(--border); 
-            color: var(--neon); text-align: center; text-decoration: none; 
-            border-radius: 5px; font-size: 12px; transition: 0.3s; 
-        }
+        .game-btn { display: block; width: 100%; padding: 10px; margin-bottom: 8px; background: rgba(0, 242, 255, 0.05); border: 1px solid var(--border); color: var(--neon); text-align: center; text-decoration: none; border-radius: 5px; font-size: 12px; transition: 0.3s; }
         .game-btn:hover { background: var(--gold); color: black; box-shadow: 0 0 15px var(--gold); }
     </style>
 </head>
@@ -158,7 +68,7 @@ def get_hud_design():
             <div class="nav-item" onclick="window.open('https://www.google.com', '_blank')">🌐 WEB LINK</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">📝 DATA LOG</div>
             <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">🧮 ANALYSIS</div>
-            <div class="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">⚙️ SYSTEM CORE</div>
+            <div class,="nav-item" onclick="alert('Local OS restricted in Cloud, Sir.')">⚙️ SYSTEM CORE</div>
             <div style="margin-top: auto; padding: 20px;">
                 <div class="panel-title" style="border-bottom:1px solid var(--border); padding-bottom:5px; margin-bottom:10px;">Gaming Hub</div>
                 <a href="https://poki.com" target="_blank" class="game-btn">POKI</a>
@@ -166,7 +76,7 @@ def get_hud_design():
                 <a href="https://unblockedgames.xyz" target="_blank" class="game-btn">UNBLOCKED X</a>
             </div>
         </div>
-        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">S-CLOUD ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">KINGS ADMIN</span></div></div>
+        <div class="top-bar"><div>S-STATUS: <span style="color: #0f0;">S-CLOUD ACTIVE</span></div><div id="clock">Loading...</div><div>USER: <span style="color: white;">S-CLASS ADMIN</span></div></div>
         <div class="content">
             <div class="panel"><div class="panel-title">CORE METRICS <span style="color:white">ELITE</span></div><div style="font-size: 13px; line-height: 2.2;">S-CORE: <span style="color:white">STABLE</span><br>SENSORS: <span style="color:white">SYNCED</span><br>UPLINK: <span style="color:white">ACTIVE</span></div></div>
             <div class="center-area"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><div class="core-center" id="reactor"></div></div>
@@ -229,20 +139,39 @@ def action():
 @app.route('/ask', methods=['POST'])
 def ask():
     if not api_key:
-        return jsonify({'response': "API Key missing from Render environment, Sir."}), 500
+        return jsonify({'response': "S-CLASS ERROR: API Key missing from Render environment, Sir."}), 500
+    
     try:
         user_message = request.json.get('message')
         now = datetime.now()
-        system_prompt = f"You are Kings Client AI. Date: {now.strftime('%B %d, %Y')}. You are an elite, professional, and high-status AI assistant. Refer to the user as 'Sir'. Be concise and highly technical."
+        system_prompt = f"You are Kings Client AI. Date: {now.strftime('%B %d, %Y')}. You are an elite, professional, and high-status AI assistant. Refer to the user as 'Brotacho'. Be concise and highly technical."
         
-        # THE MOST STABLE MODEL FOR GROQ FREE TIER
-        chat_completion = client.chat.completions.create(
-            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_message}],
-            model="llama-3.1-8b-instant",
-        )
-        return jsonify({'response': chat_completion.choices[0].message.content})
+        # DIRECT REST API CALL (Bypassing the Groq library)
+        headers = {
+            "Authorization": f"Bearer {api_// CORRECTED api_key}",
+            "Content-Type": "application/json"
+        }
+        
+        # I will use the most stable model name
+        payload = {
+            "model": "llama-3.3-70b-versatile",
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_message}
+            ]
+        }
+        
+        import requests
+        response = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload)
+        
+        if response.status_code == 200:
+            result = response.json()
+            return jsonify({'response': result['choices'][0]['message']['content']})
+        else:
+            return jsonify({'response': f"Server Error: {response.status_code} - {response.text}"}), 500
+
     except Exception as e:
-        return jsonify({'response': f"System Error: {str(e)}"}), 500
+        return jsonify({'// error': str(e), 'response': f"Critical System Error: {str(e)}"}), 500
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5000))
