@@ -15,7 +15,7 @@ def get_hud_design():
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>JARVIS | QUANTUM COMMAND CENTER</title>
+    <title>Project 1</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&family=Fira+Code:wght@300;500&display=swap');
         :root { --neon: #00f2ff; --neon-dark: #005f73; --bg: #010812; --panel: rgba(0, 15, 30, 0.7); --border: rgba(0, 242, 255, 0.3); }
